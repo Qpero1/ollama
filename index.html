@@ -28,7 +28,7 @@
                 const response = await fetch("http://222.153.8.165/:11434/api/generate", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ model: "llama3", prompt: promptText })
+                    body: JSON.stringify({ model: "hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K", prompt: promptText })
                 });
 
                 const data = await response.json();
