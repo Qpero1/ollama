@@ -1,21 +1,44 @@
-const OLLAMA_SERVER = "http://192.168.1.73:11434"; // Use your PC's local IP
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        textarea { width: 80%; height: 100px; }
+        button { padding: 10px; margin-top: 10px; }
+        #response { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Chat with Ollama</h1>
+    <textarea id="prompt" placeholder="Enter your prompt..."></textarea><br>
+    <button onclick="sendPrompt()">Send</button>
+    <div id="response"></div>
 
-async function sendPrompt() {
-    const promptText = document.getElementById("prompt").value;
-    const responseDiv = document.getElementById("response");
+    <script>
+        const OLLAMA_SERVER = "http://192.168.1.73:11434"; // Use your PC's local IP
 
-    responseDiv.innerHTML = "Generating...";
+        async function sendPrompt() {
+            const promptText = document.getElementById("prompt").value;
+            const responseDiv = document.getElementById("response");
 
-    try {
-        const response = await fetch(`${OLLAMA_SERVER}/api/generate`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ model: "llama3", prompt: promptText })
-        });
+            responseDiv.innerHTML = "Generating...";
 
-        const data = await response.json();
-        responseDiv.innerHTML = data.response;
-    } catch (error) {
-        responseDiv.innerHTML = "Error connecting to Ollama.";
-    }
-}
+            try {
+                const response = await fetch(`${OLLAMA_SERVER}/api/generate`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ model: "llama3", prompt: promptText })
+                });
+
+                const data = await response.json();
+                responseDiv.innerHTML = data.response;
+            } catch (error) {
+                responseDiv.innerHTML = "Error connecting to Ollama.";
+            }
+        }
+    </script>
+</body>
+</html>
