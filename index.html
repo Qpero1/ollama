@@ -1,41 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Prompt Test</title>
+    <title>Ollama Web Client</title>
 </head>
 <body>
-    <h1>Ask the Model a Question</h1>
-    <textarea id="promptInput" rows="4" cols="50" placeholder="Enter your prompt here..."></textarea><br><br>
-    <button id="sendPrompt">Send Prompt</button>
-    <p id="responseOutput"></p>
+    <h1>Ollama Web Client</h1>
+    <input type="text" id="promptInput" placeholder="Enter your prompt">
+    <button id="sendButton">Send</button>
+    <div id="responseDiv"></div>
 
     <script>
-        // Function to send a prompt to the server
-        document.getElementById('sendPrompt').addEventListener('click', async function () {
+        async function sendPrompt(prompt) {
+            try {
+                const response = await fetch('/ollama/api/generate', { // Adjust the path to match ollama's API.
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ model: "llama2", prompt: prompt }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.response;
+            } catch (error) {
+                console.error('Error sending prompt:', error);
+                return null;
+            }
+        }
+
+        document.getElementById('sendButton').addEventListener('click', async () => {
             const prompt = document.getElementById('promptInput').value;
-            
-            // Send POST request to the server
-            const response = await fetch('http://22.153.8.165:11434/api/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: "hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K", // your model ID
-                    prompt: prompt // the input prompt from the user
-                })
-            });
-
-            const data = await response.json();
-            console.log(data); // Log the full response from the server
-
-            // Display the response on the page
-            if (data.response) {
-                document.getElementById('responseOutput').innerText = `Model Response: ${data.response}`;
-            } else {
-                document.getElementById('responseOutput').innerText = "No response received.";
+            const response = await sendPrompt(prompt);
+            if (response) {
+                document.getElementById('responseDiv').textContent = response;
             }
         });
     </script>
