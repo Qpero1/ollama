@@ -18,7 +18,7 @@
     <div id="response"></div>
 
     <script>
-        const OLLAMA_SERVER = "http://192.168.1.73:11434"; // Use your server's IP address
+        const OLLAMA_SERVER = "http://222.153.8.165:11434"; // Use your server's IP address
 
         async function sendPrompt() {
             const promptText = document.getElementById("prompt").value;
@@ -27,7 +27,7 @@
             responseDiv.innerHTML = "Generating...";
 
             try {
-                const response = await fetch("http://222.153.8.165/:11434/api/generate", {
+                const response = await fetch("http://222.153.8.165:11434/api/generate", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ model: model, prompt: promptText })
