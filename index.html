@@ -1,0 +1,21 @@
+const OLLAMA_SERVER = "http://192.168.1.73:11434"; // Use your PC's local IP
+
+async function sendPrompt() {
+    const promptText = document.getElementById("prompt").value;
+    const responseDiv = document.getElementById("response");
+
+    responseDiv.innerHTML = "Generating...";
+
+    try {
+        const response = await fetch(`${OLLAMA_SERVER}/api/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ model: "llama3", prompt: promptText })
+        });
+
+        const data = await response.json();
+        responseDiv.innerHTML = data.response;
+    } catch (error) {
+        responseDiv.innerHTML = "Error connecting to Ollama.";
+    }
+}
