@@ -14,23 +14,15 @@
 <body>
     <h1>Chat with Ollama</h1>
     <textarea id="prompt" placeholder="Enter your prompt..."></textarea><br>
-    
-    <!-- Dropdown for model selection -->
-    <select id="modelSelect">
-        <option value="hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K">AceMath-7B</option>
-        <option value="hf.co/bartowski/DeepSeek-R1-Distill-Qwen-14B-GGUF:Q5_K_S">DeepSeek-R1-Qwen-14B</option>
-        <!-- Add more options here -->
-    </select><br>
-    
     <button onclick="sendPrompt()">Send</button>
     <div id="response"></div>
 
     <script>
-        const OLLAMA_SERVER = "http://192.168.1.73:11434"; // Use your server's IP address
+        // Update with the correct server address (either local IP or public IP)
+        const OLLAMA_SERVER = "http://222.153.8.165:11434"; 
 
         async function sendPrompt() {
             const promptText = document.getElementById("prompt").value;
-            const model = document.getElementById("modelSelect").value; // Get selected model
             const responseDiv = document.getElementById("response");
 
             responseDiv.innerHTML = "Generating...";
@@ -39,11 +31,18 @@
                 const response = await fetch(`${OLLAMA_SERVER}/api/generate`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ model: model, prompt: promptText })
+                    body: JSON.stringify({ 
+                        model: "hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K", 
+                        prompt: promptText 
+                    })
                 });
 
                 const data = await response.json();
-                responseDiv.innerHTML = data.response;
+                if (data.done) {
+                    responseDiv.innerHTML = data.response;
+                } else {
+                    responseDiv.innerHTML = "Still generating...";
+                }
             } catch (error) {
                 responseDiv.innerHTML = "Error connecting to Ollama.";
             }
