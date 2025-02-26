@@ -3,50 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ollama Chat</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-        textarea { width: 80%; height: 100px; }
-        button { padding: 10px; margin-top: 10px; }
-        #response { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
-    </style>
+    <title>Model Prompt Test</title>
 </head>
 <body>
-    <h1>Chat with Ollama</h1>
-    <textarea id="prompt" placeholder="Enter your prompt..."></textarea><br>
-    <button onclick="sendPrompt()">Send</button>
-    <div id="response"></div>
+    <h1>Ask the Model a Question</h1>
+    <textarea id="promptInput" rows="4" cols="50" placeholder="Enter your prompt here..."></textarea><br><br>
+    <button id="sendPrompt">Send Prompt</button>
+    <p id="responseOutput"></p>
 
     <script>
-        // Update with the correct server address (either local IP or public IP)
-        const OLLAMA_SERVER = "http://222.153.8.165:11434"; 
+        // Function to send a prompt to the server
+        document.getElementById('sendPrompt').addEventListener('click', async function () {
+            const prompt = document.getElementById('promptInput').value;
+            
+            // Send POST request to the server
+            const response = await fetch('http://22.153.8.165:11434/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: "hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K", // your model ID
+                    prompt: prompt // the input prompt from the user
+                })
+            });
 
-        async function sendPrompt() {
-            const promptText = document.getElementById("prompt").value;
-            const responseDiv = document.getElementById("response");
+            const data = await response.json();
+            console.log(data); // Log the full response from the server
 
-            responseDiv.innerHTML = "Generating...";
-
-            try {
-                const response = await fetch(`${OLLAMA_SERVER}/api/generate`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        model: "hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K", 
-                        prompt: promptText 
-                    })
-                });
-
-                const data = await response.json();
-                if (data.done) {
-                    responseDiv.innerHTML = data.response;
-                } else {
-                    responseDiv.innerHTML = "Still generating...";
-                }
-            } catch (error) {
-                responseDiv.innerHTML = "Error connecting to Ollama.";
+            // Display the response on the page
+            if (data.response) {
+                document.getElementById('responseOutput').innerText = `Model Response: ${data.response}`;
+            } else {
+                document.getElementById('responseOutput').innerText = "No response received.";
             }
-        }
+        });
     </script>
 </body>
 </html>
