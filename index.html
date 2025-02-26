@@ -14,24 +14,23 @@
 <body>
     <h1>Chat with Ollama</h1>
     <textarea id="prompt" placeholder="Enter your prompt..."></textarea><br>
-
-    <!-- Model Selection Dropdown -->
-    <label for="modelSelect">Choose a Model:</label>
+    
+    <!-- Dropdown for model selection -->
     <select id="modelSelect">
         <option value="hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K">AceMath-7B</option>
-        <option value="hf.co/bartowski/DeepSeek-R1-Distill-Qwen-14B-GGUF:Q5_K_S">DeepSeek-R1</option>
-        <option value="hf.co/bartowski/DeepSeek-R1-Distill-Qwen-14B-GGUF:Q6_K">DeepSeek-R1 (Q6)</option>
+        <option value="hf.co/bartowski/DeepSeek-R1-Distill-Qwen-14B-GGUF:Q5_K_S">DeepSeek-R1-Qwen-14B</option>
+        <!-- Add more options here -->
     </select><br>
-
+    
     <button onclick="sendPrompt()">Send</button>
     <div id="response"></div>
 
     <script>
-        const OLLAMA_SERVER = "http://222.153.8.165:11434";
+        const OLLAMA_SERVER = "http://192.168.1.73:11434"; // Use your server's IP address
 
         async function sendPrompt() {
             const promptText = document.getElementById("prompt").value;
-            const selectedModel = document.getElementById("modelSelect").value; // Get selected model
+            const model = document.getElementById("modelSelect").value; // Get selected model
             const responseDiv = document.getElementById("response");
 
             responseDiv.innerHTML = "Generating...";
@@ -40,17 +39,13 @@
                 const response = await fetch(`${OLLAMA_SERVER}/api/generate`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ model: selectedModel, prompt: promptText })
+                    body: JSON.stringify({ model: model, prompt: promptText })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
                 const data = await response.json();
-                responseDiv.innerHTML = data.response || "No response received.";
+                responseDiv.innerHTML = data.response;
             } catch (error) {
-                responseDiv.innerHTML = `Error connecting to Ollama: ${error.message}`;
+                responseDiv.innerHTML = "Error connecting to Ollama.";
             }
         }
     </script>
