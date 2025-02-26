@@ -18,6 +18,8 @@
     <div id="response"></div>
 
     <script>
+        const OLLAMA_SERVER = "http://192.168.1.73:11434"; // Use your server's IP address
+
         async function sendPrompt() {
             const promptText = document.getElementById("prompt").value;
             const responseDiv = document.getElementById("response");
@@ -28,11 +30,15 @@
                 const response = await fetch("http://222.153.8.165/:11434/api/generate", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ model: "hf.co/mradermacher/AceMath-7B-Instruct-i1-GGUF:Q6_K", prompt: promptText })
+                    body: JSON.stringify({ model: model, prompt: promptText })
                 });
 
                 const data = await response.json();
-                responseDiv.innerHTML = data.response;
+                if (data.done) {
+                    responseDiv.innerHTML = data.response;
+                } else {
+                    responseDiv.innerHTML = "Still generating...";
+                }
             } catch (error) {
                 responseDiv.innerHTML = "Error connecting to Ollama.";
             }
